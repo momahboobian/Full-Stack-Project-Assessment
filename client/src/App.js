@@ -5,6 +5,7 @@ import AddVideoForm from "./components/AddVideoForm";
 import VideoCard from "./components/VideoCard";
 import SortFilters from "./components/SortFilters";
 import Search from "./components/Search";
+import dData from "./exampleresponse.json";
 
 import "./App.css";
 
@@ -15,25 +16,23 @@ function App() {
   const [error, setError] = useState(null);
   const [votedVideos, setVotedVideos] = useState([]);
 
+  console.log("hello");
   useEffect(() => {
     fetchVideos();
   }, []);
 
   const fetchVideos = async () => {
     try {
-      const response = await fetch(
-        // "https://full-stack-project-jcr4.onrender.com/"
-        "http://18.133.225.232:5001/"
-      );
+      const response = await fetch("http://3.8.192.95:5001/videos");
 
       if (!response.ok) {
-        throw new Error("Failed to fetch videos!");
+        throw new Error("Failed to fetch videos from API!");
       }
 
-      const data = await response.json();
+      const jsonData = await response.json();
 
       // Sort the videos by ID in descending order (latest video first)
-      const sortedVideos = data.sort((a, b) => b.id - a.id);
+      const sortedVideos = jsonData.sort((a, b) => b.id - a.id);
 
       const updatedVideos = sortedVideos.map((video) => {
         if (!video.uploadDate) {
@@ -45,23 +44,19 @@ function App() {
       setVideos(updatedVideos);
       setLoading(false);
     } catch (error) {
-      setError(error.message);
-      setLoading(false);
+      console.error("API fetch error:", error.message);
     }
   };
 
   const addVideo = async (video) => {
     try {
-      const response = await fetch(
-        "http://18.133.225.232:5001/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(video),
-        }
-      );
+      const response = await fetch("http://3.8.192.95:5001/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(video),
+      });
       if (!response.ok) {
         throw new Error("Failed to add video!");
       }
@@ -80,12 +75,9 @@ function App() {
 
   const removeVideo = async (id) => {
     try {
-      const response = await fetch(
-        `http://18.133.225.232:5001/${id}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const response = await fetch(`http://3.8.192.95:5001/${id}`, {
+        method: "DELETE",
+      });
       if (!response.ok) {
         throw new Error("Video not found!");
       }
@@ -102,16 +94,13 @@ function App() {
     }
 
     try {
-      const response = await fetch(
-        `http://18.133.225.232:5001/${id}/rating`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ like: true }),
-        }
-      );
+      const response = await fetch(`http://3.8.192.95:5001/${id}/rating`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ like: true }),
+      });
       if (!response.ok) {
         throw new Error(`Failed to upvote video (ID: ${id})`);
       }
@@ -136,16 +125,13 @@ function App() {
     }
 
     try {
-      const response = await fetch(
-        `http://18.133.225.232:5001/${id}/rating`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ dislike: true }),
-        }
-      );
+      const response = await fetch(`http://3.8.192.95:5001/${id}/rating`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ dislike: true }),
+      });
       if (!response.ok) {
         throw new Error(`Failed to downvote video (ID: ${id})`);
       }
@@ -232,6 +218,7 @@ function App() {
           )}
         </div>
       </div>
+      </
     </Container>
   );
 }
