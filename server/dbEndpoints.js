@@ -12,7 +12,7 @@ const dbEndpoints = (db) => {
       res.json(dbVideos);
     } catch (error) {
       console.error("Error fetching videos from the database:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ error: `Internal Server Error ${error.message}` });
     }
   });
 
@@ -27,7 +27,6 @@ const dbEndpoints = (db) => {
         );
 
         console.log("Result of database query:", result.rows);
-
 
         const id = result.rows[0].id;
 
@@ -56,33 +55,32 @@ const dbEndpoints = (db) => {
   router.post("/:videoId/rating", async (req, res) => {
     const videoId = req.params.videoId;
     const { like, dislike } = req.body;
-  
+
     try {
       let query = "";
       let queryParams = [];
-  
+
       if (like) {
         query = "UPDATE videos SET rating = rating + 1";
         queryParams.push(videoId);
       }
-  
+
       if (dislike) {
         query = "UPDATE videos SET rating = rating - 1";
         queryParams.push(videoId);
       }
-  
+
       if (like || dislike) {
         // Update the rating column in the videos table
         await db.query(`${query} WHERE id = $1`, queryParams);
       }
-  
+
       res.status(200).json({ message: "Rating updated successfully" });
     } catch (error) {
       console.error("Error updating rating:", error);
       res.status(500).json({ error: "Failed to update rating" });
     }
   });
-  
 
   return router;
 };

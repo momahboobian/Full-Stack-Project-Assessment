@@ -1,10 +1,8 @@
-const express = require("express");
 const { Pool } = require("pg");
 const fs = require("fs");
 
 require("dotenv").config();
 
-// Create a PostgreSQL pool
 const db = new Pool({
   port: process.env.DB_PORT,
   database: process.env.DB_DATABASE,
@@ -16,7 +14,6 @@ const db = new Pool({
   },
 });
 
-// Function to test the database connection
 const testConnection = async () => {
   try {
     const result = await db.query("SELECT NOW()");
@@ -30,7 +27,7 @@ const testConnection = async () => {
 // Function to create the "videos" table if it doesn't exist
 const createTable = async () => {
   const createTableQuery = `
-    CREATE TABLE IF NOT EXISTS "videorec"."videos" (
+    CREATE TABLE IF NOT EXISTS "videos" (
       id SERIAL PRIMARY KEY,
       title VARCHAR(255) NOT NULL,
       url TEXT NOT NULL,
@@ -56,14 +53,13 @@ const populateTable = async () => {
   for (const video of jsonVideos) {
     try {
       const existingVideo = await db.query(
-        'SELECT id FROM "videorec"."videos" WHERE url = $1',
+        'SELECT id FROM "videos" WHERE url = $1',
         [video.url]
       );
 
       if (existingVideo.rows.length === 0) {
-        // Insert the video into the database only if it doesn't exist
         await db.query(
-          'INSERT INTO "videorec"."videos" (title, url, uploadDate, rating) VALUES ($1, $2, $3, $4)',
+          'INSERT INTO "videos" (title, url, uploadDate, rating) VALUES ($1, $2, $3, $4)',
           [video.title, video.url, new Date(), video.rating]
         );
         console.log(`Inserted video: ${video.title}`);
@@ -95,5 +91,5 @@ module.exports = {
   populateTable,
   testConnection,
   hasRecords,
-  db, // Export the db instance
+  db,
 };

@@ -24,8 +24,8 @@ testConnection()
     console.error("Error setting up database:", error);
   });
 
-app.use("/videos", jsonEndpoints);
-app.use("/", dbEndpoints(db));
+app.use("/api/videos", jsonEndpoints);
+app.use("/api/", dbEndpoints(db));
 
 const server = app.listen(port, () => {
   const { address, port } = server.address();
