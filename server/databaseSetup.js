@@ -1,6 +1,5 @@
 const { Pool } = require("pg");
 const fs = require("fs");
-
 require("dotenv").config();
 
 const db = new Pool({
@@ -24,7 +23,6 @@ const testConnection = async () => {
   }
 };
 
-// Function to create the "videos" table if it doesn't exist
 const createTable = async () => {
   const createTableQuery = `
     CREATE TABLE IF NOT EXISTS "videos" (
@@ -35,29 +33,25 @@ const createTable = async () => {
       rating INT NOT NULL
     )`;
 
-  try {
-    const result = await db.query(createTableQuery);
-    console.log("Table 'videos' created or already exists.");
-    return result;
-  } catch (err) {
-    console.error("Error creating the 'videos' table:", err);
-    throw err;
-  }
+  await db.query(createTableQuery);
+  console.log("Table 'videos' created or already exists.");
 };
 
-// Function to populate the table from videos
+const readJsonFile = (path) => {
+  return JSON.parse(fs.readFileSync(path, "utf8"));
+};
+
 const populateTable = async () => {
-  const jsonFilePath = "./exampleResponse.json";
-  const jsonVideos = JSON.parse(fs.readFileSync(jsonFilePath, "utf8"));
+  const jsonVideos = readJsonFile("./exampleResponse.json");
 
   for (const video of jsonVideos) {
     try {
-      const existingVideo = await db.query(
+      const { rows: existingVideo } = await db.query(
         'SELECT id FROM "videos" WHERE url = $1',
         [video.url]
       );
 
-      if (existingVideo.rows.length === 0) {
+      if (existingVideo.length === 0) {
         await db.query(
           'INSERT INTO "videos" (title, url, uploadDate, rating) VALUES ($1, $2, $3, $4)',
           [video.title, video.url, new Date(), video.rating]
@@ -75,15 +69,9 @@ const populateTable = async () => {
   console.log("Populated 'videos' table from exampleResponse.json");
 };
 
-// Function to check if there are any records in the "videos" table
 const hasRecords = async () => {
-  try {
-    const result = await db.query("SELECT COUNT(*) FROM videos");
-    return parseInt(result.rows[0].count) > 0;
-  } catch (error) {
-    console.error("Error checking for records in 'videos' table:", error);
-    throw error;
-  }
+  const result = await db.query("SELECT COUNT(*) FROM videos");
+  return parseInt(result.rows[0].count) > 0;
 };
 
 module.exports = {
