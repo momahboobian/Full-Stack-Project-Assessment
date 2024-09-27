@@ -1,5 +1,7 @@
 const { Pool } = require("pg");
+const path = require("path");
 const fs = require("fs");
+
 require("dotenv").config();
 
 const db = new Pool({
@@ -37,12 +39,17 @@ const createTable = async () => {
   console.log("Table 'videos' created or already exists.");
 };
 
-const readJsonFile = (path) => {
-  return JSON.parse(fs.readFileSync(path, "utf8"));
-};
-
 const populateTable = async () => {
-  const jsonVideos = readJsonFile("./exampleResponse.json");
+  const jsonVideosPath = path.resolve(__dirname, "exampleResponse.json");
+
+  let jsonVideos;
+  try {
+    const jsonData = fs.readFileSync(jsonVideosPath);
+    jsonVideos = JSON.parse(jsonData); // Parse the JSON data
+  } catch (error) {
+    console.error("Error reading or parsing exampleResponse.json:", error);
+    return; // Exit the function if there's an error
+  }
 
   for (const video of jsonVideos) {
     try {
