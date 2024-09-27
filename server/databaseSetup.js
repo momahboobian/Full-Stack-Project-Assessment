@@ -74,7 +74,7 @@ const db = new Pool({
   user: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   host: process.env.DB_HOST,
-  ssl: process.env.DB_HOST ? { rejectUnauthorized: false } : false,
+  ssl: false,
 });
 
 const testConnection = async () => {
