@@ -1,6 +1,8 @@
-version: "3.8"
+version: "3"
 services:
-  vr-server:
-    image: momahboobian/vr-server:latest
+  app:
+    build: ./server
+    volumes:
+      - ./server/exampleResponse.json:/app/exampleResponse.json
     ports:
-      - "5002:5002"
+      - "5002:5001"

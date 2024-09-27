@@ -1,31 +1,37 @@
 const express = require("express");
 const cors = require("cors");
 const jsonEndpoints = require("./jsonEndpoints");
+const dbEndpoints = require("./dbEndpoints");
 const {
   testConnection,
   createTable,
   populateTable,
-  hasRecords,
   db,
 } = require("./databaseSetup");
-const dbEndpoints = require("./dbEndpoints");
+
+require("dotenv").config();
 
 const app = express();
 const port = process.env.PORT || 5001;
-require("dotenv").config();
 
 app.use(express.json());
 app.use(cors());
 
-testConnection()
-  .then(createTable)
-  .then(populateTable)
-  .catch((error) => {
+const initializeDatabase = async () => {
+  try {
+    await testConnection();
+    await createTable();
+    await populateTable();
+  } catch (error) {
     console.error("Error setting up database:", error);
-  });
+    process.exit(1); // Exit if critical error
+  }
+};
 
-app.use("/videos", jsonEndpoints);
-app.use("/", dbEndpoints(db));
+initializeDatabase();
+
+app.use("/api/videos", jsonEndpoints);
+app.use("/api/", dbEndpoints(db));
 
 const server = app.listen(port, () => {
   const { address, port } = server.address();
