@@ -9,7 +9,6 @@ const AddVideoForm = ({ onAddVideo }) => {
   const [showForm, setShowForm] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-
   const handleTitleChange = (event) => {
     setTitle(event.target.value);
   };
@@ -27,7 +26,7 @@ const AddVideoForm = ({ onAddVideo }) => {
 
   const handleAddVideoClick = () => {
     setShowForm((prevShowForm) => !prevShowForm); // Toggle the value of showForm
-    setErrorMessage("")
+    setErrorMessage("");
   };
 
   const handleAddVideo = (event) => {
@@ -35,10 +34,13 @@ const AddVideoForm = ({ onAddVideo }) => {
 
     const videoID = ExtractVideoId(url);
 
-    const youtubeUrlRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const youtubeUrlRegex =
+      /^(https?:\/\/)?(www\.)?(youtube\.com\/(?:[^/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
 
     if (!youtubeUrlRegex.test(url)) {
-      setErrorMessage("Invalid YouTube URL. Please provide a valid YouTube link.");
+      setErrorMessage(
+        "Invalid YouTube URL. Please provide a valid YouTube link."
+      );
       return;
     }
 
@@ -79,7 +81,7 @@ const AddVideoForm = ({ onAddVideo }) => {
               required
             />
           </div>
-          
+
           {errorMessage && (
             <Typography variant="body2" color="error">
               {errorMessage}
