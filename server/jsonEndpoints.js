@@ -4,15 +4,22 @@ const fs = require("fs");
 const router = express.Router();
 
 const jsonFilePath = path.resolve(__dirname, "exampleResponse.json");
-const jsonData = JSON.parse(fs.readFileSync(jsonFilePath, "utf8"));
 
-router.get("/", async (req, res) => {
-  try {
-    res.json(jsonData);
-  } catch (error) {
-    console.error("Error fetching videos:", error);
-    res.status(500).json({ error: "Failed to fetch videos" });
+try {
+  if (!fs.existsSync(jsonFilePath)) {
+    throw new Error("File not found: " + jsonFilePath);
   }
-});
+
+  const jsonData = JSON.parse(fs.readFileSync(jsonFilePath, "utf8"));
+
+  router.get("/", async (req, res) => {
+    res.json(jsonData);
+  });
+} catch (error) {
+  console.error("Error loading JSON data:", error);
+  router.get("/", async (req, res) => {
+    res.status(500).json({ error: "Failed to load JSON data" });
+  });
+}
 
 module.exports = router;

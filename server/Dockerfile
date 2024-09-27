@@ -11,7 +11,6 @@ RUN npm install --only=production
 
 # Copy the rest of the application code
 COPY . .
-COPY exampleResponse.json ./
 
 # Expose port 5001 to the outside world
 EXPOSE 5000
