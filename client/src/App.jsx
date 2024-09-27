@@ -5,7 +5,6 @@ import AddVideoForm from "./components/AddVideoForm";
 import VideoCard from "./components/VideoCard";
 import SortFilters from "./components/SortFilters";
 import Search from "./components/Search";
-import dData from "./exampleresponse.json";
 
 import "./App.css";
 
@@ -23,7 +22,7 @@ function App() {
 
   const fetchVideos = async () => {
     try {
-      const response = await fetch("http://3.8.192.95:5001/videos");
+      const response = await fetch("/api/videos");
 
       if (!response.ok) {
         throw new Error("Failed to fetch videos from API!");
@@ -50,7 +49,7 @@ function App() {
 
   const addVideo = async (video) => {
     try {
-      const response = await fetch("http://3.8.192.95:5001/", {
+      const response = await fetch("/api/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -75,7 +74,7 @@ function App() {
 
   const removeVideo = async (id) => {
     try {
-      const response = await fetch(`http://3.8.192.95:5001/${id}`, {
+      const response = await fetch(`/api/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {
@@ -94,7 +93,7 @@ function App() {
     }
 
     try {
-      const response = await fetch(`http://3.8.192.95:5001/${id}/rating`, {
+      const response = await fetch(`/api/${id}/rating`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -125,7 +124,7 @@ function App() {
     }
 
     try {
-      const response = await fetch(`http://3.8.192.95:5001/${id}/rating`, {
+      const response = await fetch(`/api/${id}/rating`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -218,7 +217,6 @@ function App() {
           )}
         </div>
       </div>
-      </
     </Container>
   );
 }
